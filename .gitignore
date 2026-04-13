@@ -21,3 +21,7 @@ checkpoints/
 
 # UV lock
 uv.lock
+
+# Cache
+.history
+.DS_Store

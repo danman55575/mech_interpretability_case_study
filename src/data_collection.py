@@ -5,7 +5,7 @@ from transformer_lens import HookedTransformer
 from tqdm import tqdm
 
 from src.config import cfg
-from src.utils import set_seed, get_device, ensure_directories
+from src.utils import set_seed, get_device, ensure_directories, verify_local_dataset
 
 
 def get_text_batches(dataset_iterator, tokenizer, batch_size: int, seq_len: int):
@@ -27,6 +27,10 @@ def get_text_batches(dataset_iterator, tokenizer, batch_size: int, seq_len: int)
 def main() -> None:
     set_seed()
     ensure_directories()
+
+    if cfg.model.use_local_dataset:
+        verify_local_dataset()
+
     device = get_device()
 
     print(f"[INFO] Initializing collection on {device.type.upper()}")
@@ -42,13 +46,19 @@ def main() -> None:
         model.tokenizer.pad_token = model.tokenizer.eos_token
 
     # Setup Dataset Stream
-    print(f"[INFO] Streaming {cfg.model.dataset_name}...")
-    dataset = load_dataset(
-        cfg.model.dataset_name,
-        name=cfg.model.dataset_config,
-        split="train",
-        streaming=True,
-    )
+    if cfg.model.use_local_dataset:
+        print(f"[INFO] Streaming local dataset from {cfg.paths.raw_dataset_dir}...")
+        dataset = load_dataset(
+            "parquet", data_dir=cfg.paths.raw_dataset_dir, split="train", streaming=True
+        )
+    else:
+        print(f"[INFO] Streaming {cfg.model.dataset_name} from Hugging Face Hub...")
+        dataset = load_dataset(
+            cfg.model.dataset_name,
+            name=cfg.model.dataset_config,
+            split="train",
+            streaming=True,
+        )
     dataset_iter = iter(dataset)
 
     # Collection Loop

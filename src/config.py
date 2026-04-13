@@ -9,6 +9,7 @@ class PathsConfig:
     base_dir: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     data_dir: str = os.path.join(base_dir, "data", "activations_cache")
     checkpoint_dir: str = os.path.join(base_dir, "checkpoints", "sae_checkpoints")
+    raw_dataset_dir: str = os.path.join(base_dir, "data", "raw_dataset")
 
 
 @dataclass
@@ -21,6 +22,8 @@ class ModelConfig:
     layer_idx: int = 12
     d_model: int = 896
 
+    use_local_dataset: bool = True
+
     @property
     def hook_name(self) -> str:
         return f"blocks.{self.layer_idx}.hook_resid_post"
@@ -31,16 +34,16 @@ class TrainingConfig:
     """Hyperparameters for SAE training and data collection."""
 
     # Data collection
-    batch_size_collection: int = 4
+    batch_size_collection: int = 16
     seq_len: int = 512
-    total_tokens: int = 10_000
-    tokens_per_chunk: int = 500_000
+    total_tokens: int = 500_000
+    tokens_per_chunk: int = 200_000
 
     # SAE Training
-    batch_size_train: int = 2048
+    batch_size_train: int = 4096
     learning_rate: float = 1e-3
-    l1_coeff: float = 3e-3
-    l1_warmup_steps: int = 5
+    l1_coeff: float = 3.2e-3
+    l1_warmup_steps: int = 30
     seed: int = 42
 
 
@@ -50,8 +53,8 @@ class SteerConfig:
 
     target_feature_id: int = 2475
     steering_coeff: float = 25.0
-    prompt: str = "Can you tell about what is life? Yes, life is"
-    max_new_tokens: int = 10
+    prompt: str = "Can you tell me about what is life? Yes, life is"
+    max_new_tokens: int = 50
 
 
 @dataclass

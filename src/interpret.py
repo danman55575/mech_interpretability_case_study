@@ -5,18 +5,22 @@ from datasets import load_dataset
 from transformer_lens import HookedTransformer
 
 from src.config import cfg
-from src.utils import set_seed, get_device
+from src.utils import set_seed, get_device, verify_local_dataset
 from src.sae_model import SparseAutoencoder
 from src.logger import init_clearml
 
 # Configuration for interpretation
-NUM_TEXTS_TO_ANALYZE = 1
+NUM_TEXTS_TO_ANALYZE = 100
 TOP_K_EXAMPLES = 5
 ACTIVATION_THRESHOLD = 1.0
 
 
 def main() -> None:
     set_seed()
+
+    if cfg.model.use_local_dataset:
+        verify_local_dataset()
+
     device = get_device()
 
     # Initialize ClearML task
@@ -35,13 +39,19 @@ def main() -> None:
     sae.load_state_dict(torch.load(sae_path, map_location=device))
     sae.eval()
 
-    print(f"[INFO] Fetching samples from {cfg.model.dataset_name}...")
-    dataset = load_dataset(
-        cfg.model.dataset_name,
-        name=cfg.model.dataset_config,
-        split="train",
-        streaming=True,
-    )
+    if cfg.model.use_local_dataset:
+        print(f"[INFO] Fetching samples from {cfg.paths.raw_dataset_dir}...")
+        dataset = load_dataset(
+            "parquet", data_dir=cfg.paths.raw_dataset_dir, split="train", streaming=True
+        )
+    else:
+        print(f"[INFO] Fetching samples from {cfg.model.dataset_name}...")
+        dataset = load_dataset(
+            cfg.model.dataset_name,
+            name=cfg.model.dataset_config,
+            split="train",
+            streaming=True,
+        )
     texts = [
         item["text"][:1000] for i, item in zip(range(NUM_TEXTS_TO_ANALYZE), dataset)
     ]

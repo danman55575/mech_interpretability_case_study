@@ -1,0 +1,20 @@
+[project]
+name = "mech-interp-case-study"
+version = "0.1.0"
+description = "Decomposing Contextual Embeddings via Sparse Autoencoders"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "clearml>=2.1.5",
+    "datasets>=4.8.4",
+    "einops>=0.8.2",
+    "python-dotenv>=1.2.2",
+    "torch>=2.11.0",
+    "tqdm>=4.67.3",
+    "transformer-lens>=2.18.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.10",
+]

@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+*.pyc
+
+# Virtual environments
+.venv
+venv
+
+# Data and Checkpoints
+data/
+checkpoints/
+*.pt
+
+# Secrets
+.env
+
+# UV lock
+uv.lock

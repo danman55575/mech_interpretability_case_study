@@ -25,3 +25,4 @@ uv.lock
 # Cache
 .history
 .DS_Store
+.ruff_cache

@@ -1,8 +1,9 @@
 [project]
-name = "mech-interp-case-study"
-version = "0.1.0"
-description = "Decomposing Contextual Embeddings via Sparse Autoencoders"
+name = "mechanistic-interpretability-case-study"
+version = "0.2.0"
+description = "Decomposing Contextual Embeddings: Mechanistic Interpretability via Sparse Autoencoders"
 readme = "README.md"
+license = { text = "MIT" }
 requires-python = ">=3.10"
 dependencies = [
     "clearml>=2.1.5",
